@@ -146,7 +146,11 @@ First, we would create a script (`split_files.sh`) that does the file splitting 
 	
 	filesize=$1
 	./gt-1.5.10-Linux_x86_64-64bit-complete/bin/gt splitfasta -targetsize $filesize mouse_rna.fa
-	ls *.fa.* > list.txt
+	ls mouse_rna.fa.* > list.txt
+
+This script will need executable permissions:
+
+	chmod +x split_files.sh
 
 Then, we create a DAG workflow file that ties the two steps together: 
 
