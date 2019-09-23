@@ -34,15 +34,15 @@ Once the tutorial has downloaded, move into the folder and run a script to downl
 
 This command will have downloaded and unzipped the BLAST program, the file we want to query 
 (`mouse_rna.fa`) and a set of tools that will split the file into smaller pieces
-(`gt-1.5.10-Linux_x86_64-64bit-complete``). 
+(`gt-1.5.10-Linux_x86_64-64bit-complete`). 
 
 To split the file, we can run this command: 
 
-	./gt-1.5.10-Linux_x86_64-64bit-complete/bin/gt splitfasta -targetsize 1 mouse_rna.fa
+	./gt-1.5.10-Linux_x86_64-64bit-complete/bin/gt splitfasta -targetsize 2 mouse_rna.fa
 
 Later, we'll need a list of the split files, so run this command to generate that list: 
 
-	ls mouse*.fa > list.txt
+	ls mouse_rna.fa.* > list.txt
 
 ## Examine the submit file
 
@@ -114,6 +114,11 @@ Our jobs should be set and ready to go. To submit them, run this command:
 
 	condor_submit blast.submit
 
+And you should see that 20 jobs have been submitted: 
+
+	Submitting job(s).....................
+	51 job(s) submitted to cluster 90363.
+
 You can check on your jobs' progress using `condor_q`
 
 ## Bonus: a BLAST workflow
@@ -121,5 +126,26 @@ You can check on your jobs' progress using `condor_q`
 We had to go through multiple steps to run the jobs above. There was an initial 
 step to split the files and generate a list of them; then we submitted the jobs. These 
 two steps can be tied together in a workflow using the HTCondor DAGMan workflow tool. 
+
+First, we would create a script (`split_files.sh`) that does the file splitting steps: 
+
+	#!/bin/bash
+	
+	filesize=$1
+	./gt-1.5.10-Linux_x86_64-64bit-complete/bin/gt splitfasta -targetsize $filesize mouse_rna.fa
+	ls *.fa.* > list.txt
+
+Just for fun, let's create a script that moves the results into a folder
+
+Then, we create a DAG workflow file that ties the two steps together: 
+
+	## DAG: blastrun.dag
+	JOB blast blast.submit
+	SCRIPT PRE blast split_files.sh 2
+
+To submit this DAG, we use this command: 
+
+	condor_submit_dag blastrun.dag
+
 
 [stashcache]: https://support.opensciencegrid.org/support/solutions/articles/12000002775-transferring-data-with-stashcache

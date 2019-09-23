@@ -9,4 +9,4 @@ tar -xzvf pdbaa.tar.gz
 rm pdbaa.tar.gz
 
 # run blast query on input file
-./blastx -db pdbaa/pdbaa -query $(inputfile) -out $(inputfile).result
+./blastx -db pdbaa/pdbaa -query $inputfile -out $inputfile.result
