@@ -108,15 +108,28 @@ The submit file had a script called `run_blast.sh`:
 It saves the name of the input file, downloads and unpacks our database, and then 
 runs the BLAST query from the input file we transferred and used as the argument. 
 
+> Note on the stashcp command: In this job, we're copying the file from a particular 
+> user's stash folder (`ckoch5`), but you have your own `stash/public` folder that you 
+> could use for the database. If you wanted to try this, you would want to download the 
+> `pdbaa.tar.gz` file, move it to your `stash` folder and change the path in the `stashcp`
+> command above. This might look like: 
+>
+>    wget http://stash.osgconnect.net/~ckoch5/blast/pdbaa.tar.gz
+>    mv pdbaa.tar.gz /home/username/stash/public
+> 
+> And in the `.sh` script: 
+> 
+>    stashcp /user/username/public/pdbaa.tar.gz ./
+
 ## Submit the jobs
 
 Our jobs should be set and ready to go. To submit them, run this command:
 
 	condor_submit blast.submit
 
-And you should see that 20 jobs have been submitted: 
+And you should see that 51 jobs have been submitted: 
 
-	Submitting job(s).....................
+	Submitting job(s)................................................
 	51 job(s) submitted to cluster 90363.
 
 You can check on your jobs' progress using `condor_q`
@@ -134,8 +147,6 @@ First, we would create a script (`split_files.sh`) that does the file splitting 
 	filesize=$1
 	./gt-1.5.10-Linux_x86_64-64bit-complete/bin/gt splitfasta -targetsize $filesize mouse_rna.fa
 	ls *.fa.* > list.txt
-
-Just for fun, let's create a script that moves the results into a folder
 
 Then, we create a DAG workflow file that ties the two steps together: 
 
