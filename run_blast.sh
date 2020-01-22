@@ -1,11 +1,15 @@
 #!/bin/bash
-
+  
 # get input file from arguments
 inputfile=$1
 
-# download database and unzip
-stashcp /user/ckoch5/public/blast/pdbaa.tar.gz ./
-tar -xzvf pdbaa.tar.gz
+# load stashcp module
+module load stashcache
+
+# download database and unzip into new dir
+mkdir pdbaa
+stashcp /osgconnect/public/jmvera/pdbaa.tar.gz ./
+tar -xzvf pdbaa.tar.gz -C pdbaa
 rm pdbaa.tar.gz
 
 # run blast query on input file
