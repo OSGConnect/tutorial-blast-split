@@ -118,7 +118,7 @@ runs the BLAST query from the input file we transferred and used as the argument
 > `pdbaa.tar.gz` file, move it to your `/public` folder and change the path in the `stashcp`
 > command above. This might look like: 
 >
->    wget http://stash.osgconnect.net/public/jmvera/pdbaa.tar.gz
+>    wget http://stash.osgconnect.net/public/jmvera/pdbaa.tar.gz    
 >    mv pdbaa.tar.gz /public/username
 > 
 > And in the `.sh` script: 
