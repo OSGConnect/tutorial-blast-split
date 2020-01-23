@@ -97,29 +97,33 @@ The submit file had a script called `run_blast.sh`:
 	# get input file from arguments
 	inputfile=$1
 
-	# download database and unzip
-	stashcp /user/ckoch5/public/blast/pdbaa.tar.gz ./
-	tar -xzvf pdbaa.tar.gz
+	# load stashcp module
+	module load stashcache
+
+	# download database and unzip into new dir
+	mkdir pdbaa
+	stashcp /osgconnect/public/jmvera/pdbaa.tar.gz ./
+	tar -xzvf pdbaa.tar.gz -C pdbaa
 	rm pdbaa.tar.gz
 
 	# run blast query on input file
-	./blastx -db pdbaa/pdbaa -query $(inputfile) -out $(inputfile).result
+	./blastx -db pdbaa/pdbaa -query $inputfile -out $inputfile.result
 
 It saves the name of the input file, downloads and unpacks our database, and then 
 runs the BLAST query from the input file we transferred and used as the argument. 
 
 > Note on the stashcp command: In this job, we're copying the file from a particular 
-> user's stash folder (`ckoch5`), but you have your own `stash/public` folder that you 
+> user's `/public` folder (`jmvera`), but you have your own `/public` folder that you 
 > could use for the database. If you wanted to try this, you would want to download the 
-> `pdbaa.tar.gz` file, move it to your `stash` folder and change the path in the `stashcp`
+> `pdbaa.tar.gz` file, move it to your `/public` folder and change the path in the `stashcp`
 > command above. This might look like: 
 >
->    wget http://stash.osgconnect.net/~ckoch5/blast/pdbaa.tar.gz
->    mv pdbaa.tar.gz /home/username/stash/public
+>    wget http://stash.osgconnect.net/public/jmvera/pdbaa.tar.gz    
+>    mv pdbaa.tar.gz /public/username
 > 
 > And in the `.sh` script: 
 > 
->    stashcp /user/username/public/pdbaa.tar.gz ./
+>    stashcp /public/username/pdbaa.tar.gz ./
 
 ## Submit the jobs
 
