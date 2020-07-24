@@ -123,7 +123,7 @@ runs the BLAST query from the input file we transferred and used as the argument
 > 
 > And in the `.sh` script: 
 > 
->    stashcp /public/username/pdbaa.tar.gz ./
+>    stashcp /osgconnect/public/username/pdbaa.tar.gz ./
 
 ## Submit the jobs
 
