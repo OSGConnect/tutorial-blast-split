@@ -83,7 +83,7 @@ a different file name for each job.
 
 We can set the variable by using the `queue` syntax shown at the bottom of the file: 
 
-	queue intputfile from list.txt
+	queue inputfile from list.txt
 
 This command will pull file names from the `list.txt` file that we created earlier, and 
 submit one job per file and set the "inputfile" variable to that file name. 
