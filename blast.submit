@@ -1,13 +1,12 @@
 executable = run_blast.sh
 arguments = $(inputfile)
-transfer_input_files = ncbi-blast-2.9.0+/bin/blastx,$(inputfile)
+transfer_input_files = ncbi-blast-2.9.0+/bin/blastx, $(inputfile), stash:///osgconnect/public/osg/BlastTutorial/pdbaa.tar.gz
 
 output = logs/job_$(process).out
 error = logs/job_$(process).err
 log = logs/job_$(process).log
 
-+WantsStashCache = true
-requirements = OSGVO_OS_STRING == "RHEL 7" && Arch == "X86_64" && HAS_MODULES == True
+requirements = OSGVO_OS_STRING == "RHEL 7" && Arch == "X86_64"
 
 request_memory = 2GB
 request_disk = 1GB
