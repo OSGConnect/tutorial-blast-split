@@ -15,15 +15,12 @@ To run BLAST, we need three things:
 The database and the input file will each get special treatment. The database we are using 
 is large enough that we will want to use OSG Connect's `stashcache` capability (more information 
 about that [here][stashcache]). The input 
-file is large enough that A) it is near the upper limit of what is practical to transfer, 
-B) it would take hours to complete a single `blastx`
-analysis for it and C) the resulting output file would be huge. 
-
+file is large enough that a) it is near the upper limit of what is practical to transfer, 
+b) it would take hours to complete a single `blastx`
+analysis for it, and c) the resulting output file would be huge. 
 
 Because the BLAST process is 
 run over the input file line by line, it is scientifically valid to split up the input query file, analyze the pieces, and then put the results back together at the end! By splitting the input query file into smaller pieces, each of the queries can be run as seporate jobs. On the other hand, BLAST databases should not be split, because the blast output includes a score value for each sequence that is calculated relative to the entire length of the database.
-
-This is what we are going to do below. 
 
 ## Get materials and set up files
 
@@ -68,7 +65,7 @@ The submit file, `blast.submit` looks like this:
 
 	queue inputfile from list.txt
 
-The executable, `run_blast.sh` is a script that runs blast, and takes in a file to 
+The executable `run_blast.sh` is a script that runs blast and takes in a file to 
 query as its argument. We'll look at this script in more detail in a minute. 
 
 Our job will need to transfer the `blastx` executable and the input file being used for 
@@ -76,7 +73,7 @@ queries, shown in the `transfer_input_files` line. Because of the size of our da
 we'll be using `stash:///` to transfer the database to our job.
 
 > Note on `stash:///`: In this job, we're copying the file from a particular 
-> `/public` folder (`osg/BlastTutorial`), but you have your own `/public` folder that you 
+> `/public` folder (`osg/BlastTutorialV1`), but you have your own `/public` folder that you 
 > could use for the database. If you wanted to try this, you would want to navigate to your `/public` folder, download the 
 > `pdbaa.tar.gz` file, return to your `/home` folder, and change the path in the `stash:///`
 > command above. This might look like: 
