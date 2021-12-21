@@ -20,7 +20,7 @@ b) it would take hours to complete a single `blastx`
 analysis for it, and c) the resulting output file would be huge. 
 
 Because the BLAST process is 
-run over the input file line by line, it is scientifically valid to split up the input query file, analyze the pieces, and then put the results back together at the end! By splitting the input query file into smaller pieces, each of the queries can be run as seporate jobs. On the other hand, BLAST databases should not be split, because the blast output includes a score value for each sequence that is calculated relative to the entire length of the database.
+run over the input file line by line, it is scientifically valid to split up the input query file, analyze the pieces, and then put the results back together at the end! By splitting the input query file into smaller pieces, each of the queries can be run as separate jobs. On the other hand, BLAST databases should not be split, because the blast output includes a score value for each sequence that is calculated relative to the entire length of the database.
 
 ## Get materials and set up files
 
@@ -37,7 +37,7 @@ This command will have downloaded and unzipped the BLAST program (`ncbi-blast-2.
 (`mouse_rna.fa`) and a set of tools that will split the file into smaller pieces
 (`gt-1.5.10-Linux_x86_64-64bit-complete`).
 
-Next, we will use the command `gt` from the `genome tools` package to split our input query file into 2 MB chunks as indicated by the -targetzise flag. To split the file, run this command: 
+Next, we will use the command `gt` from the `genome tools` package to split our input query file into 2 MB chunks as indicated by the -targetsize flag. To split the file, run this command: 
 
 	./gt-1.5.10-Linux_x86_64-64bit-complete/bin/gt splitfasta -targetsize 2 mouse_rna.fa
 
@@ -79,7 +79,7 @@ we'll be using `stash:///` to transfer the database to our job.
 > command above. This might look like: 
 > 
 >    cd /public/username
->    wget http://proxy.chtc.wisc.edu/SQUID/osgschool21/pdbaa.tar.gz
+>    wget http://stash.osgconnect.net/public/osg/BlastTutorialV1/pdbaa.tar.gz
 >    cd /home/username
 
 Finally, you may have already noticed that instead of listing the individual input file 
