@@ -8,18 +8,19 @@ software program.
 ## Job components and plan
 
 To run BLAST, we need three things: 
-- the BLAST program (specifically the `blastx` binary)
-- a reference database (this is usually a larger file)
-- the file we want to query against the database
+1. the BLAST program (specifically the `blastx` binary)
+2. a reference database (this is usually a larger file)
+3. the file we want to query against the database
 
-The database and the input file will each get special treatment. The database we're using 
+The database and the input file will each get special treatment. The database we are using 
 is large enough that we will want to use OSG Connect's `stashcache` capability (more information 
 about that [here][stashcache]). The input 
-file is large enough that a) it's near the upper limit of what's practical to transfer and 
+file is large enough that a) it is near the upper limit of what is practical to transfer, 
 b) it would take hours to complete a single `blastx`
-analysis for it and the resulting output file would be huge. Because the BLAST process is 
-run over the input file line by line, this input file can be split into smaller pieces and 
-the queries can be run as separate jobs. This is what we're going to do below. 
+analysis for it, and c) the resulting output file would be huge. 
+
+Because the BLAST process is 
+run over the input file line by line, it is scientifically valid to split up the input query file, analyze the pieces, and then put the results back together at the end! By splitting the input query file into smaller pieces, each of the queries can be run as separate jobs. On the other hand, BLAST databases should not be split, because the blast output includes a score value for each sequence that is calculated relative to the entire length of the database.
 
 ## Get materials and set up files
 
@@ -27,16 +28,16 @@ Run the tutorial command:
 
 	tutorial blast-split
 
-Once the tutorial has downloaded, move into the folder and run a script to download the remaining files: 
+Once the tutorial has downloaded, move into the folder and run the `download_files.sh` script to download the remaining files: 
 
 	cd tutorial-blast-split
 	./download_files.sh
 
-This command will have downloaded and unzipped the BLAST program, the file we want to query 
+This command will have downloaded and unzipped the BLAST program (`ncbi-blast-2.9.0+`), the file we want to query 
 (`mouse_rna.fa`) and a set of tools that will split the file into smaller pieces
-(`gt-1.5.10-Linux_x86_64-64bit-complete`). 
+(`gt-1.5.10-Linux_x86_64-64bit-complete`).
 
-To split the file, we can run this command: 
+Next, we will use the command `gt` from the `genome tools` package to split our input query file into 2 MB chunks as indicated by the -targetsize flag. To split the file, run this command: 
 
 	./gt-1.5.10-Linux_x86_64-64bit-complete/bin/gt splitfasta -targetsize 2 mouse_rna.fa
 
@@ -50,14 +51,13 @@ The submit file, `blast.submit` looks like this:
 
 	executable = run_blast.sh
 	arguments = $(inputfile)
-	transfer_input_files = ncbi-blast-2.9.0+/bin/blastx,$(inputfile)
+	transfer_input_files = ncbi-blast-2.9.0+/bin/blastx, $(inputfile), stash:///osgconnect/public/osg/BlastTutorial/pdbaa.tar.gz
 
 	output = logs/job_$(process).out
 	error = logs/job_$(process).err
 	log = logs/job_$(process).log
 
-	+WantsStashCache = true
-	requirements = OSGVO_OS_STRING == "RHEL 7" && Arch == "X86_64" && HAS_MODULES == True
+	requirements = OSGVO_OS_STRING == "RHEL 7" && Arch == "X86_64"
 
 	request_memory = 2GB
 	request_disk = 1GB
@@ -65,16 +65,22 @@ The submit file, `blast.submit` looks like this:
 
 	queue inputfile from list.txt
 
-The executable, `run_blast.sh` is a script that runs blast, and takes in a file to 
+The executable `run_blast.sh` is a script that runs blast and takes in a file to 
 query as its argument. We'll look at this script in more detail in a minute. 
 
 Our job will need to transfer the `blastx` executable and the input file being used for 
 queries, shown in the `transfer_input_files` line. Because of the size of our database, 
-we'll be using the `stashcp` command to transfer the database to our job, which is why 
-that file isn't listed in `transfer_input_files`
+we'll be using `stash:///` to transfer the database to our job.
 
-Because we're using StashCache, we need some additional requirements to access that 
-system. 
+> Note on `stash:///`: In this job, we're copying the file from a particular 
+> `/public` folder (`osg/BlastTutorialV1`), but you have your own `/public` folder that you 
+> could use for the database. If you wanted to try this, you would want to navigate to your `/public` folder, download the 
+> `pdbaa.tar.gz` file, return to your `/home` folder, and change the path in the `stash:///`
+> command above. This might look like: 
+> 
+>    cd /public/username
+>    wget http://stash.osgconnect.net/public/osg/BlastTutorialV1/pdbaa.tar.gz
+>    cd /home/username
 
 Finally, you may have already noticed that instead of listing the individual input file 
 by name, we've used the following syntax: `$(inputfile)`. This is a variable that represents 
@@ -96,34 +102,16 @@ The submit file had a script called `run_blast.sh`:
 
 	# get input file from arguments
 	inputfile=$1
-
-	# load stashcp module
-	module load stashcache
-
-	# download database and unzip into new dir
-	mkdir pdbaa
-	stashcp /osgconnect/public/jmvera/pdbaa.tar.gz ./
-	tar -xzvf pdbaa.tar.gz -C pdbaa
+	
+	# Prepare our database and unzip into new dir
+	tar -xzvf pdbaa.tar.gz
 	rm pdbaa.tar.gz
 
 	# run blast query on input file
 	./blastx -db pdbaa/pdbaa -query $inputfile -out $inputfile.result
 
-It saves the name of the input file, downloads and unpacks our database, and then 
+It saves the name of the input file, unpacks our database, and then 
 runs the BLAST query from the input file we transferred and used as the argument. 
-
-> Note on the stashcp command: In this job, we're copying the file from a particular 
-> user's `/public` folder (`jmvera`), but you have your own `/public` folder that you 
-> could use for the database. If you wanted to try this, you would want to download the 
-> `pdbaa.tar.gz` file, move it to your `/public` folder and change the path in the `stashcp`
-> command above. This might look like: 
->
->    wget http://stash.osgconnect.net/public/jmvera/pdbaa.tar.gz    
->    mv pdbaa.tar.gz /public/username
-> 
-> And in the `.sh` script: 
-> 
->    stashcp /osgconnect/public/username/pdbaa.tar.gz ./
 
 ## Submit the jobs
 
