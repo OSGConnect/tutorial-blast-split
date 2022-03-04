@@ -1,4 +1,4 @@
-[title]: - "Running a BLAST workflow"
+[title]: - "High-Throughput BLAST"
 [TOC]
 
 This tutorial will put together several OSG tools and ideas - handling a larger 
