@@ -1,5 +1,9 @@
-[title]: - "High-Throughput BLAST"
-[TOC]
+---
+ospool:
+    path: software_examples/bioinformatics/tutorial-blast-split/README.md
+---
+
+# High-Throughput BLAST
 
 This tutorial will put together several OSG tools and ideas - handling a larger 
 data file, splitting a large file into smaller pieces, and transferring a portable 
