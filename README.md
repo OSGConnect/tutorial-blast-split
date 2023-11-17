@@ -12,6 +12,7 @@ software program.
 ## Job components and plan
 
 To run BLAST, we need three things: 
+
 1. the BLAST program (specifically the `blastx` binary)
 2. a reference database (this is usually a larger file)
 3. the file we want to query against the database
