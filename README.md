@@ -15,17 +15,25 @@ To run BLAST, we need three things:
 
 1. the BLAST program (specifically the `blastx` binary)
 2. a reference database (this is usually a larger file)
-3. the file we want to query against the database
+3. the input file we want to query against the database
 
-The database and the input file will each get special treatment. The database we are using 
-is large enough that we will want to use OSG Connect's `stashcache` capability (more information 
-about that [here][stashcache]). The input 
-file is large enough that a) it is near the upper limit of what is practical to transfer, 
-b) it would take hours to complete a single `blastx`
-analysis for it, and c) the resulting output file would be huge. 
+The database and the input file will each get special treatment. 
 
-Because the BLAST process is 
-run over the input file line by line, it is scientifically valid to split up the input query file, analyze the pieces, and then put the results back together at the end! By splitting the input query file into smaller pieces, each of the queries can be run as separate jobs. On the other hand, BLAST databases should not be split, because the blast output includes a score value for each sequence that is calculated relative to the entire length of the database.
+The input file is large enough that 
+a) it is near the upper limit of what is practical to transfer, 
+b) it would take hours to complete a single `blastx` analysis for it, and 
+c) the resulting output file would be huge. 
+While we may technically be able to use the input file as it is, in practice it is much more 
+effective to split the input file into smaller pieces and run one job per piece. 
+In this case, because the BLAST program processes the contents of the input file line by line, 
+splitting apart the input file will have no affect on the final results.
+While we will need to combine the results of the many individual jobs to achieve the results, 
+we gain a large advantage because the smaller jobs can be distributed across many computers.
+
+The database we are using is large enough that we will want to use the 
+[OSDF](https://portal.osg-htc.org/documentation/htc_workloads/managing_data/osdf/) to handle the file transfer.
+Unlike the input file, BLAST databases should not be split because the BLAST output includes 
+a score value for each sequence that is calculated relative to the entire length of the database.
 
 ## Get materials and set up files
 
