@@ -37,17 +37,17 @@ a score value for each sequence that is calculated relative to the entire length
 
 ## Get materials and set up files
 
-Run the tutorial command:
+Download the tutorial files from GitHub with
 
-	tutorial blast-split
+	git clone https://github.com/OSGConnect/tutorial-blast-split.git
 
-Once the tutorial has downloaded, move into the folder and run the `download_files.sh` script to download the remaining files: 
+Once the repository has been cloned, move into the folder and run the `download_files.sh` script to download the remaining files: 
 
 	cd tutorial-blast-split
 	./download_files.sh
 
 This command will have downloaded and unzipped the BLAST program (`ncbi-blast-2.9.0+`), the file we want to query 
-(`mouse_rna.fa`) and a set of tools that will split the file into smaller pieces
+(`mouse_rna.fa`), and a set of tools that will split the file into smaller pieces
 (`gt-1.5.10-Linux_x86_64-64bit-complete`).
 
 Next, we will use the command `gt` from the `genome tools` package to split our input query file into 2 MB chunks as indicated by the -targetsize flag. To split the file, run this command: 
